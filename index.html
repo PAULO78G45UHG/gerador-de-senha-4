@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberVault — Security & Passphrase Suite</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <span>CYBER<strong>VAULT</strong> <small>v4.0 Enterprise</small></span>
+      </div>
+      <div class="nav-actions">
+        <span class="crypto-status"><span class="indicator"></span> WebCrypto Active</span>
+      </div>
+    </header>
+
+    <div class="main-grid">
+      <section class="card primary-card">
+        <div class="mode-selector">
+          <button class="mode-btn active" data-mode="random">Senha Aleatória</button>
+          <button class="mode-btn" data-mode="passphrase">Passphrase (Palavras)</button>
+          <button class="mode-btn" data-mode="pin">PIN Numérico</button>
+        </div>
+
+        <div class="display-box">
+          <input type="text" id="passwordOutput" readonly placeholder="Aguardando geração..." aria-label="Senha Gerada">
+          <div class="display-actions">
+            <button id="refreshBtn" class="action-btn" title="Regerar (Atalho: Espaço)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+            <button id="copyBtn" class="action-btn primary-action">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="copyBtnText">Copiar</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="analytics-bar">
+          <div class="stat-item">
+            <span class="stat-label">Entropia</span>
+            <span id="entropyVal" class="stat-value">0 bits</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Força Bruta</span>
+            <span id="crackVal" class="stat-value">Instantâneo</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Caracteres</span>
+            <span id="charCountVal" class="stat-value">0</span>
+          </div>
+        </div>
+
+        <div class="strength-meter">
+          <div class="meter-labels">
+            <span>Nível de Criptografia</span>
+            <strong id="strengthLabel">Nenhum</strong>
+          </div>
+          <div class="meter-track">
+            <div id="meterFill" class="meter-fill"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card config-card">
+        <h3>Parâmetros de Configuração</h3>
+
+        <div id="randomControls" class="control-section">
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="lengthRange">Tamanho da Senha</label>
+              <span id="lengthDisplay" class="badge">24</span>
+            </div>
+            <input type="range" id="lengthRange" min="8" max="128" value="24">
+          </div>
+
+          <div class="toggle-grid">
+            <label class="toggle-item">
+              <input type="checkbox" id="incUpper" checked>
+              <span class="checkbox-custom"></span>
+              <span>Maiúsculas (A-Z)</span>
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" id="incLower" checked>
+              <span class="checkbox-custom"></span>
+              <span>Minúsculas (a-z)</span>
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" id="incNums" checked>
+              <span class="checkbox-custom"></span>
+              <span>Números (0-9)</span>
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" id="incSyms" checked>
+              <span class="checkbox-custom"></span>
+              <span>Símbolos Especial</span>
+            </label>
+          </div>
+
+          <div class="advanced-inputs">
+            <label class="toggle-item">
+              <input type="checkbox" id="excAmbiguous" checked>
+              <span class="checkbox-custom"></span>
+              <span>Excluir Caracteres Ambíguos (1, l, I, 0, O)</span>
+            </label>
+            <div class="custom-syms-input">
+              <label for="customSymbols">Símbolos Customizados:</label>
+              <input type="text" id="customSymbols" value="!@#$%^&*()_+-=[]{}|;:,.<>?">
+            </div>
+          </div>
+        </div>
+
+        <div id="passphraseControls" class="control-section hidden">
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="wordsRange">Quantidade de Palavras</label>
+              <span id="wordsDisplay" class="badge">4</span>
+            </div>
+            <input type="range" id="wordsRange" min="3" max="10" value="4">
+          </div>
+
+          <div class="toggle-grid">
+            <label class="toggle-item">
+              <input type="checkbox" id="passCapitalize" checked>
+              <span class="checkbox-custom"></span>
+              <span>Primeira Letra Maiúscula</span>
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" id="passIncludeNumber" checked>
+              <span class="checkbox-custom"></span>
+              <span>Incluir Número</span>
+            </label>
+          </div>
+
+          <div class="custom-syms-input">
+            <label for="separatorInput">Separador de Palavras:</label>
+            <input type="text" id="separatorInput" value="-" maxlength="3">
+          </div>
+        </div>
+      </section>
+
+      <section class="card history-card">
+        <div class="history-header">
+          <h3>Histórico da Sessão</h3>
+          <div class="history-actions">
+            <button id="toggleHistoryVis" class="text-btn">Ocultar</button>
+            <button id="exportHistoryBtn" class="text-btn">Exportar (.JSON)</button>
+            <button id="clearHistoryBtn" class="text-btn danger">Limpar</button>
+          </div>
+        </div>
+        <ul id="historyList" class="history-list">
+          <li class="empty-msg">Nenhuma senha gerada ainda nesta sessão.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
